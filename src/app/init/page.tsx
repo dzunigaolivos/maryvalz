@@ -257,13 +257,12 @@ function Slide5({ onNext }: { onNext: () => void }) {
                     <div className='quinnesential'>
                         <div className='flex items-center'>
                             <div>
-                                <img src={mockup.src} alt="Mockup" className="w-[300px]  mr-10 h-auto" />
+                                <img src={mockup.src} alt="Mockup" className="w-[800px] h-auto" />
                             </div>
-                            <div className='flex flex-col justify-start items-start'>
+                            <div className='flex flex-col justify-start items-start -ml-36'>
                                 <div className='text-4xl text-yellow-100' style={{textShadow: '0 2px black'}}>Mary Valz</div>
                                 <div className='text-6xl font-bold text-yellow-100' style={{textShadow: '0 3px black'}}>Sombras</div>
                                 <div className='text-8xl font-bold text-yellow-100' style={{textShadow: '0 3px black'}}>del Pasado</div>
-                                <div className='text-4xl'>En preventa!</div>
                                 <div>Exclusivo en:</div>
                                 <div>Imagen</div>
                             </div>
