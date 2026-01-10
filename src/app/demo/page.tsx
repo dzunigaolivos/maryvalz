@@ -1,8 +1,9 @@
 'use client';
 import HTMLFlipBook from "react-pageflip";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
+
 // Hook para obtener el tamaño de la ventana
-function UseWindowSize() {
+function useWindowSize() {
     const [size, setSize] = useState({ width: 0, height: 0 });
     useEffect(() => {
         function handleResize() {
@@ -18,75 +19,114 @@ function UseWindowSize() {
     return size;
 }
 
-
-const demoPage = () => {
-    const bookImages = Array.from({ length: 32 }, (_, i) => `/book/${i + 1}.jpg`);
-    const { width, height } = UseWindowSize();
-    let flipWidth, flipHeight;
-    if (width < 720) {
-        flipWidth = width;
-        flipHeight = Math.floor(width * (1024 / 720)); // Proporción vertical
-    } else {
-        flipHeight = Math.floor(height * 0.8);
-        flipWidth = Math.floor(flipHeight * 0.703); // Proporción horizontal
-    }
-    return (
-        <>
-            {/* Desktop: dos páginas */}
-            <div className="flex bg-gray-100 p-4 w-full max-h-[100vh] h-[100vh] items-center justify-center text-gray-700">
-                <HTMLFlipBook
-                    width={flipWidth}
-                    height={flipHeight}
-                    minWidth={300}
-                    maxWidth={1920}
-                    minHeight={300}
-                    maxHeight={1080}
-                    style={{ width: flipWidth, height: flipHeight, paddingBottom: "0px" }}
-                    className={"h-full w-full"}
-                    size={"fixed"}
-                    startPage={0}
-                    drawShadow={true}
-                    flippingTime={200}
-                    usePortrait={true}
-                    startZIndex={0}
-                    autoSize={true}
-                    maxShadowOpacity={0}
-                    showCover={true}
-                    mobileScrollSupport={true}
-                    clickEventForward={true}
-                    useMouseEvents={true}
-                    swipeDistance={0}
-                    showPageCorners={true}
-                    disableFlipByClick={false}>
-                        <div className="demoPage" key={`Página 00`}>
-                            <img
-                                src='mockup(2).png'
-                                alt={`Página 00`}
-                                style={{ width: "100%", height: "100%", }}
-                            />
-                        </div>
-                        <div className="bg-white"></div>
-                        {bookImages.map((src, index) => (
-                            index === 3 ? (
-                                <div className="demoPage" key={src}>
-                                    <div className="bg-white w-full h-full"></div>
-                                </div>
-                            ) : (
-                                <div className="demoPage" key={src}>
-                                    <img
-                                        src={src}
-                                        alt={`Página ${index + 1}`}
-                                        style={{ width: "100%", height: "100%" }}
-                                    />
-                                </div>
-                            )
-                        ))}
-                        <div className="bg-white"></div>
-                </HTMLFlipBook>
+// Componente de página para el flipbook
+const Page = forwardRef<HTMLDivElement, { children?: React.ReactNode; className?: string }>(
+    ({ children, className = '' }, ref) => {
+        return (
+            <div ref={ref} className={`bg-white ${className}`}>
+                {children}
             </div>
-            
-        </>
+        );
+    }
+);
+Page.displayName = 'Page';
+
+const DemoPage = () => {
+    const bookImages = Array.from({ length: 32 }, (_, i) => `/book/${i + 1}.jpg`);
+    const { width, height } = useWindowSize();
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    // Determinar si es móvil (una página) o desktop (dos páginas)
+    const isMobile = width < 768;
+
+    // Calcular dimensiones
+    // Para modo portrait (móvil): una página ocupa el ancho
+    // Para modo landscape (desktop): el ancho es de UNA página, el componente muestra dos
+    let flipWidth: number;
+    let flipHeight: number;
+
+    if (isMobile) {
+        // Móvil: una página, ocupa casi todo el ancho
+        flipWidth = Math.min(width * 0.95, 400);
+        flipHeight = Math.floor(flipWidth * 1.42); // Proporción vertical de página
+    } else {
+        // Desktop: dos páginas lado a lado
+        // El height es 85% de la pantalla, el width de cada página mantiene proporción
+        flipHeight = Math.floor(height * 0.85);
+        flipWidth = Math.floor(flipHeight * 0.7); // Ancho de UNA página
+    }
+
+    if (!isClient || width === 0) {
+        return (
+            <div className="flex bg-gradient-to-b from-cream to-ivory w-full min-h-screen items-center justify-center">
+                <p className="text-warmGray">Cargando...</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex bg-gradient-to-b from-cream to-ivory w-full min-h-screen items-center justify-center p-4">
+            <HTMLFlipBook
+                width={flipWidth}
+                height={flipHeight}
+                minWidth={280}
+                maxWidth={600}
+                minHeight={400}
+                maxHeight={900}
+                style={{}}
+                className="shadow-2xl"
+                size="fixed"
+                startPage={0}
+                drawShadow={true}
+                flippingTime={300}
+                usePortrait={isMobile}
+                startZIndex={0}
+                autoSize={false}
+                maxShadowOpacity={0.3}
+                showCover={true}
+                mobileScrollSupport={true}
+                clickEventForward={true}
+                useMouseEvents={true}
+                swipeDistance={30}
+                showPageCorners={true}
+                disableFlipByClick={false}
+            >
+                {/* Portada */}
+                <Page className="bg-cream">
+                    <img
+                        src="/mockup(2).png"
+                        alt="Portada"
+                        className="w-full h-full object-contain"
+                    />
+                </Page>
+
+                {/* Página en blanco después de portada */}
+                <Page className="bg-cream" />
+
+                {/* Páginas del libro */}
+                {bookImages.map((src, index) => (
+                    index === 3 ? (
+                        <Page key={`page-${index}`} className="bg-white" />
+                    ) : (
+                        <Page key={`page-${index}`}>
+                            <img
+                                src={src}
+                                alt={`Página ${index + 1}`}
+                                className="w-full h-full object-cover"
+                            />
+                        </Page>
+                    )
+                ))}
+
+                {/* Contraportada */}
+                <Page className="bg-burgundy/10" />
+            </HTMLFlipBook>
+        </div>
     );
 };
 
-export default demoPage;
+export default DemoPage;

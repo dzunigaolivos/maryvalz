@@ -1,30 +1,570 @@
-
 'use client';
 
-export default function Home() {
+import { motion } from 'framer-motion';
+import { FaInstagram } from 'react-icons/fa';
+import Image from 'next/image';
+import { useState, useEffect, forwardRef } from 'react';
+import HTMLFlipBook from 'react-pageflip';
+
+const purchaseLinks = [
+  {
+    name: 'Librería Antártica',
+    logo: '/antarticaLogo.png',
+    url: 'https://www.antartica.cl/sombras-del-pasado-9789564065465.html',
+  },
+  {
+    name: 'Buscalibre',
+    logo: '/buscalibreLogo.png',
+    url: 'https://www.buscalibre.cl/libro-sombras-del-pasado/9789564065465/p/64317986',
+  },
+  {
+    name: 'Trayecto Bookstore',
+    logo: '/bookstoreLogo.png',
+    url: 'https://www.trayectobookstore.cl/sombras-del-pasado',
+  },
+  {
+    name: 'Trayecto Editorial',
+    logo: '/editorialLogo.png',
+    url: 'https://editorial-trayecto.cl/producto/sombras-del-pasado/',
+    isEditorial: true,
+  },
+];
+
+// Componente divisor con ornamento
+const SectionDivider = ({ icon = 'flower' }: { icon?: 'flower' | 'book' | 'heart' | 'star' }) => {
+  const icons = {
+    flower: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C13.1 2 14 2.9 14 4C14 4.74 13.6 5.39 13 5.73V7H14C15.1 7 16 7.9 16 9C16 9.74 15.6 10.39 15 10.73V12H16C17.1 12 18 12.9 18 14C18 14.74 17.6 15.39 17 15.73V17H18C19.1 17 20 17.9 20 19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19C4 17.9 4.9 17 6 17H7V15.73C6.4 15.39 6 14.74 6 14C6 12.9 6.9 12 8 12H9V10.73C8.4 10.39 8 9.74 8 9C8 7.9 8.9 7 10 7H11V5.73C10.4 5.39 10 4.74 10 4C10 2.9 10.9 2 12 2Z"/>
+      </svg>
+    ),
+    book: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 5C19.89 4.65 18.67 4.5 17.5 4.5C15.55 4.5 13.45 4.9 12 6C10.55 4.9 8.45 4.5 6.5 4.5C4.55 4.5 2.45 4.9 1 6V20.65C1 20.9 1.25 21.15 1.5 21.15C1.6 21.15 1.65 21.1 1.75 21.1C3.1 20.45 5.05 20 6.5 20C8.45 20 10.55 20.4 12 21.5C13.35 20.65 15.8 20 17.5 20C19.15 20 20.85 20.3 22.25 21.05C22.35 21.1 22.4 21.1 22.5 21.1C22.75 21.1 23 20.85 23 20.6V6C22.4 5.55 21.75 5.25 21 5ZM21 18.5C19.9 18.15 18.7 18 17.5 18C15.8 18 13.35 18.65 12 19.5V8C13.35 7.15 15.8 6.5 17.5 6.5C18.7 6.5 19.9 6.65 21 7V18.5Z"/>
+      </svg>
+    ),
+    heart: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+      </svg>
+    ),
+    star: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/>
+      </svg>
+    ),
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 via-blue-100 to-yellow-100 p-8">
-      <div className="flex flex-col items-center gap-6 bg-white/80 rounded-2xl shadow-xl p-10 max-w-lg">
-        <span className="text-6xl animate-bounce select-none">🦄</span>
-        <h1 className="text-3xl font-bold text-gray-800 text-center">¡Ups! Aquí no hay nada que ver...</h1>
-        <p className="text-lg text-gray-600 text-center">
-          Has llegado a un rincón vacío de la web.<br />
-          <span className="inline-block mt-2 text-2xl">¯\\_(ツ)_/¯</span>
-        </p>
-        <button
-          className="mt-4 px-6 py-2 rounded-full bg-gradient-to-r from-pink-400 to-blue-400 text-white font-semibold shadow hover:scale-105 transition-transform"
-          onClick={() => window.location.href = '/'}
-        >
-          Volver al inicio
-        </button>
-        <div className="mt-6 flex gap-2 text-2xl">
-          <span className="animate-spin">🌈</span>
-          <span className="animate-pulse">✨</span>
-          <span className="animate-bounce">🎈</span>
-        </div>
+    <div className="flex items-center justify-center py-8">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gold/40 to-gold/40 max-w-xs" />
+      <div className="mx-4 text-gold/60">
+        {icons[icon]}
       </div>
-      <footer className="mt-10 text-gray-400 text-sm text-center">
-        <p>MaryValz &copy; {new Date().getFullYear()} — Nada por aquí, ¡pero sí buena onda!</p>
+      <div className="flex-1 h-px bg-gradient-to-l from-transparent via-gold/40 to-gold/40 max-w-xs" />
+    </div>
+  );
+};
+
+// Componente de página para el flipbook
+const Page = forwardRef<HTMLDivElement, { children?: React.ReactNode; className?: string }>(
+  ({ children, className = '' }, ref) => {
+    return (
+      <div ref={ref} className={`bg-white ${className}`}>
+        {children}
+      </div>
+    );
+  }
+);
+Page.displayName = 'Page';
+
+// Hook para obtener el tamaño de la ventana
+function useWindowSize() {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+  useEffect(() => {
+    function handleResize() {
+      setSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return size;
+}
+
+export default function Home() {
+  const { width } = useWindowSize();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+
+    // Cargar script de Instagram embed
+    const script = document.createElement('script');
+    script.src = 'https://www.instagram.com/embed.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // Calcular dimensiones del libro para la sección
+  const getBookDimensions = () => {
+    if (width < 640) {
+      return { width: width * 0.85, height: Math.floor(width * 0.85 * 1.42) };
+    } else if (width < 1024) {
+      return { width: 350, height: 497 };
+    } else {
+      return { width: 400, height: 568 };
+    }
+  };
+
+  const bookDimensions = getBookDimensions();
+  const bookImages = Array.from({ length: 32 }, (_, i) => `/book/${i + 1}.jpg`);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-cream to-ivory">
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/backHero.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-burgundy/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-10 w-40 h-40 bg-gold/10 rounded-full blur-3xl" />
+        </div>
+
+        {/* Author Image */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative mb-8 z-10"
+        >
+          {/* Decorative rings */}
+          <div className="absolute inset-0 rounded-full border-2 border-gold/60 scale-150" />
+          <div className="absolute inset-0 rounded-full border border-gold/40 scale-[1.35]" />
+          <div className="absolute inset-0 rounded-full border-2 border-gold/70 scale-[1.20]" />
+          <div className="absolute inset-0 rounded-full border border-gold/50 scale-110" />
+
+          <div className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border-4 border-gold shadow-2xl flex items-center justify-center overflow-hidden">
+            <Image
+              src="/maryValz.jpeg"
+              alt="MaryValz - Autora"
+              width={320}
+              height={320}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </div>
+        </motion.div>
+
+        {/* Author Name */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-5xl md:text-7xl font-bold text-cream mb-4 text-center z-10"
+          style={{ fontFamily: "'Quintessential', cursive" }}
+        >
+          MaryValz
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="text-xl md:text-2xl text-cream mb-8 text-center max-w-2xl px-4 z-10"
+        >
+          Escritora | Soñadora | Creadora de mundos
+        </motion.p>
+
+        {/* Instagram Button in Hero */}
+        <motion.a
+          href="https://instagram.com/mary.valz"
+          target="_blank"
+          rel="noopener noreferrer"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-shadow z-10"
+        >
+          <FaInstagram className="w-5 h-5" />
+          @mary.valz
+        </motion.a>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="absolute bottom-8 z-10"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="text-cream/70"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Wave Divider - Hero to Book */}
+      <SectionDivider icon="star" />
+
+      {/* Book Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
+        <div className="max-w-6xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-burgundy text-center mb-16"
+            style={{ fontFamily: "'Quintessential', cursive" }}
+          >
+            Mi Libro
+          </motion.h2>
+
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+            {/* Book Image */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="relative w-64 md:w-80 h-auto">
+                <Image
+                  src="/mockup.png"
+                  alt="Portada del libro"
+                  width={320}
+                  height={480}
+                  className="rounded-lg"
+                  priority
+                />
+              </div>
+              {/* Book shadow effect */}
+              <div className="absolute -bottom-4 left-4 right-4 h-8 bg-burgundy/10 blur-xl rounded-full" />
+            </motion.div>
+
+            {/* Book Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex-1 text-center lg:text-left"
+            >
+              <h3 className="text-2xl md:text-3xl font-bold text-burgundy mb-4" style={{ fontFamily: "'Quintessential', cursive" }}>
+                Sombras del pasado
+              </h3>
+              <div className="text-warmGray mb-6 leading-relaxed max-w-lg">
+                <p className="font-bold mb-3">
+                  Es como una diosa entre mortales, y yo soy solo un hombre marcado por la oscuridad.
+                </p>
+                <p className="mb-3">
+                  ¿Has sentido alguna vez que el pasado te acecha? Jacob Montero es un empresario exitoso que esconde cicatrices profundas, tanto físicas como emocionales. Su vida, construida sobre el control y el sacrificio, comienza a desmoronarse tras conocer a una misteriosa mujer pelirroja. La presencia de ella desata los demonios que creía haber enterrado para siempre, obligándolo a enfrentar un pasado oscuro que lo persigue.
+                </p>
+                <p className="mb-3">
+                  ¿Podrá alguna vez liberarse de las sombras, o estará condenado a vivir en ellas? El amor, si llega, es tan peligroso como las heridas que lleva.
+                </p>
+                <p>
+                  Sombras del pasado es una novela cargada de secretos, donde la traición y el deseo entrelazan sus hilos en una red que desafía la oscuridad del alma. En medio de ese abismo, el amor se abre paso, luchando por redimir aquello que parecía perdido para siempre.
+                </p>
+              </div>
+
+              {/* Purchase Section */}
+              <div className="mt-8">
+                <h4 className="text-lg font-semibold text-burgundy mb-4">
+                  ¿Dónde conseguirlo?
+                </h4>
+                <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
+                  {purchaseLinks.map((link) => (
+                    <motion.a
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-md transition-colors text-sm font-medium ${
+                        link.isEditorial
+                          ? 'bg-gold text-white hover:bg-gold/90'
+                          : 'bg-burgundy text-cream hover:bg-burgundy/90'
+                      }`}
+                    >
+                      <Image
+                        src={link.logo}
+                        alt={link.name}
+                        width={20}
+                        height={20}
+                        className="w-5 h-5 object-contain"
+                      />
+                      <span>{link.name}</span>
+                    </motion.a>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Wave Divider - Book to Reader */}
+      <SectionDivider icon='book' />
+
+      {/* Interactive Book Reader Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-cream to-burgundy/5">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2
+              className="text-3xl md:text-4xl font-bold text-burgundy mb-4"
+              style={{ fontFamily: "'Quintessential', cursive" }}
+            >
+              Lee una muestra
+            </h2>
+            <p className="text-warmGray max-w-xl mx-auto">
+              Explora las primeras páginas del libro. Haz clic en las esquinas o arrastra para pasar las páginas.
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+            {isClient && width > 0 && (
+              <div className="relative">
+                {/* Decorative shadow behind book */}
+                <div className="absolute inset-0 bg-burgundy/10 blur-2xl rounded-lg transform translate-y-4" />
+
+                <HTMLFlipBook
+                  width={bookDimensions.width}
+                  height={bookDimensions.height}
+                  minWidth={280}
+                  maxWidth={600}
+                  minHeight={400}
+                  maxHeight={850}
+                  style={{
+                    width: bookDimensions.width,
+                    height: bookDimensions.height,
+                  }}
+                  className="shadow-2xl rounded-lg overflow-hidden"
+                  size="fixed"
+                  startPage={0}
+                  drawShadow={true}
+                  flippingTime={400}
+                  usePortrait={true}
+                  startZIndex={0}
+                  autoSize={false}
+                  maxShadowOpacity={0.3}
+                  showCover={true}
+                  mobileScrollSupport={true}
+                  clickEventForward={true}
+                  useMouseEvents={true}
+                  swipeDistance={30}
+                  showPageCorners={true}
+                  disableFlipByClick={false}
+                >
+                  {/* Cover */}
+                  <Page className="bg-cream">
+                    <img
+                      src="/mockup(2).png"
+                      alt="Portada"
+                      className="w-full h-full object-contain"
+                    />
+                  </Page>
+
+                  {/* Blank page after cover */}
+                  <Page className="bg-cream" />
+
+                  {/* Book pages */}
+                  {bookImages.map((src, index) => (
+                    index === 3 ? (
+                      <Page key={`page-${index}`} className="bg-white" />
+                    ) : (
+                      <Page key={`page-${index}`}>
+                        <img
+                          src={src}
+                          alt={`Página ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </Page>
+                    )
+                  ))}
+
+                  {/* Back cover */}
+                  <Page className="bg-burgundy/10" />
+                </HTMLFlipBook>
+
+                {/* Instructions hint */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.5 }}
+                  className="text-center text-warmGray/60 text-sm mt-6"
+                >
+                  ← Arrastra o haz clic en las esquinas para pasar las páginas →
+                </motion.p>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Wave Divider - Reader to Instagram */}
+      <SectionDivider icon='heart' />
+
+      {/* Instagram Embed Section */}
+      <section className="py-16 px-4 bg-gradient-to-b from-cream to-white">
+        <div className="max-w-sm mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-burgundy text-center mb-8"
+            style={{ fontFamily: "'Quintessential', cursive" }}
+          >
+            Últimas novedades
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex justify-center"
+          >
+            <blockquote
+              className="instagram-media"
+              data-instgrm-permalink="https://www.instagram.com/p/DNLy4AKOMzi/?utm_source=ig_embed&utm_campaign=loading"
+              data-instgrm-version="14"
+              style={{
+                background: '#FFF',
+                border: 0,
+                borderRadius: '3px',
+                boxShadow: '0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15)',
+                margin: '1px',
+                maxWidth: '350px',
+                minWidth: '280px',
+                padding: 0,
+                width: '100%',
+              }}
+            >
+              <div style={{ padding: '16px' }}>
+                <a
+                  href="https://www.instagram.com/p/DNLy4AKOMzi/?utm_source=ig_embed&utm_campaign=loading"
+                  style={{
+                    background: '#FFFFFF',
+                    lineHeight: 0,
+                    padding: 0,
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    width: '100%',
+                  }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: '#F4F4F4', borderRadius: '50%', flexGrow: 0, height: '40px', marginRight: '14px', width: '40px' }}></div>
+                    <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'center' }}>
+                      <div style={{ backgroundColor: '#F4F4F4', borderRadius: '4px', flexGrow: 0, height: '14px', marginBottom: '6px', width: '100px' }}></div>
+                      <div style={{ backgroundColor: '#F4F4F4', borderRadius: '4px', flexGrow: 0, height: '14px', width: '60px' }}></div>
+                    </div>
+                  </div>
+                  <div style={{ padding: '19% 0' }}></div>
+                  <div style={{ display: 'block', height: '50px', margin: '0 auto 12px', width: '50px' }}>
+                    <FaInstagram className="w-full h-full text-black" />
+                  </div>
+                  <div style={{ paddingTop: '8px' }}>
+                    <div style={{ color: '#3897f0', fontFamily: 'Arial,sans-serif', fontSize: '14px', fontStyle: 'normal', fontWeight: 550, lineHeight: '18px' }}>Ver esta publicación en Instagram</div>
+                  </div>
+                </a>
+              </div>
+            </blockquote>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Instagram Section - Compact */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row items-center justify-between gap-8 p-8 rounded-2xl bg-gradient-to-r from-purple-50 via-pink-50 to-orange-50 border border-pink-100"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-4 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400">
+                <FaInstagram className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-burgundy" style={{ fontFamily: "'Quintessential', cursive" }}>
+                  Sígueme en Instagram
+                </h3>
+                <p className="text-warmGray text-sm">
+                  Novedades, adelantos y contenido exclusivo
+                </p>
+              </div>
+            </div>
+            <motion.a
+              href="https://instagram.com/mary.valz"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 text-white rounded-full font-semibold shadow-lg hover:shadow-xl transition-shadow"
+            >
+              <FaInstagram className="w-5 h-5" />
+              Seguir
+            </motion.a>
+          </motion.div>
+        </div>
+      </section>
+
+
+      {/* Footer */}
+      <footer className="py-12 px-4 bg-burgundy text-cream">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Quintessential', cursive" }}>
+            Mary.Valz
+          </h2>
+          <a
+            href="https://instagram.com/mary.valz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-cream/70 hover:text-gold transition-colors mb-6"
+          >
+            <FaInstagram className="w-6 h-6" />
+            <span>@mary.valz</span>
+          </a>
+          <p className="text-cream/60 text-sm">
+            &copy; {new Date().getFullYear()} MaryValz. Todos los derechos reservados.
+          </p>
+        </div>
       </footer>
     </div>
   );

@@ -11,6 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        // Paleta de colores para escritora
+        burgundy: '#722F37',
+        gold: '#D4AF37',
+        cream: '#FFFDD0',
+        ivory: '#FFFFF0',
+        warmGray: '#6B5B5B',
       },
       fontFamily: {
         quintessential: ['"Quintessential"', 'cursive'], // nombre personalizado
