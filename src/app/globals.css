@@ -28,4 +28,19 @@ body {
   }
 }
 
+/* View Transitions */
+::view-transition-old(character-image-jacob),
+::view-transition-new(character-image-jacob),
+::view-transition-old(character-image-helena),
+::view-transition-new(character-image-helena) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
+
+/* Evitar el fade por defecto en el root durante la transición del personaje */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
 

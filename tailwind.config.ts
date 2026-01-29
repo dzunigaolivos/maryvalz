@@ -19,7 +19,8 @@ const config: Config = {
         warmGray: '#6B5B5B',
       },
       fontFamily: {
-        quintessential: ['"Quintessential"', 'cursive'], // nombre personalizado
+        quintessential: ['"Quintessential"', 'cursive'],
+        nunito: ['var(--font-nunito)', 'sans-serif'],
       },
       backgroundImage: {
         'slide-1': "url('/bg1.jpg')",

@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "question": "¿Cuál es el origen principal de las pesadillas que atormentan a Jacob?",
+    "answers": [
+      { "id": 1, "text": "El fracaso de su matrimonio" },
+      { "id": 2, "text": "La traición de su exesposa" },
+      { "id": 3, "text": "La violencia y el abuso que vivió en su infancia" },
+      { "id": 4, "text": "El miedo a perder el control de sí mismo" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 2,
+    "question": "¿Qué hecho marca el quiebre definitivo en la vida de Helena el día de su cumpleaños?",
+    "answers": [
+      { "id": 1, "text": "La discusión con su hermana" },
+      { "id": 2, "text": "Descubrir que Mike duda del matrimonio" },
+      { "id": 3, "text": "Encontrar a Mike y Bianca teniendo sexo" },
+      { "id": 4, "text": "Darse cuenta de que ya no ama a Mike" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 3,
+    "question": "¿Por qué Helena decide guardar silencio sobre el abuso que sufrió a los doce años?",
+    "answers": [
+      { "id": 1, "text": "Porque no recuerda bien lo ocurrido" },
+      { "id": 2, "text": "Para proteger a su tía y evitar destruir a su familia" },
+      { "id": 3, "text": "Porque nadie le creería" },
+      { "id": 4, "text": "Porque su hermana se lo pide" }
+    ],
+    "correctAnswerId": 2
+  },
+  {
+    "id": 4,
+    "question": "¿Qué rol cumple Christina en la vida de Helena?",
+    "answers": [
+      { "id": 1, "text": "Es solo su mejor amiga" },
+      { "id": 2, "text": "Es su jefa" },
+      { "id": 3, "text": "Fue su terapeuta y luego una figura de apoyo emocional" },
+      { "id": 4, "text": "Es su cuñada" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 5,
+    "question": "¿Qué rasgo psicológico define con mayor claridad a Jacob a lo largo de la historia?",
+    "answers": [
+      { "id": 1, "text": "Frialdad emocional" },
+      { "id": 2, "text": "Inseguridad constante" },
+      { "id": 3, "text": "Lucha interna entre control y obsesión" },
+      { "id": 4, "text": "Falta total de empatía" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 6,
+    "question": "¿Qué sentimiento comienza a desarrollarse en Jacob después de conocer a Helena?",
+    "answers": [
+      { "id": 1, "text": "Amor tranquilo y estable" },
+      { "id": 2, "text": "Deseo superficial" },
+      { "id": 3, "text": "Una necesidad obsesiva de posesión" },
+      { "id": 4, "text": "Simple curiosidad" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 7,
+    "question": "¿Cuál es el principal conflicto interno de Helena en su relación con Jacob?",
+    "answers": [
+      { "id": 1, "text": "No confiar en los hombres" },
+      { "id": 2, "text": "Sentirse inferior a otras mujeres" },
+      { "id": 3, "text": "El miedo a repetir patrones de abuso y traición" },
+      { "id": 4, "text": "No sentirse atraída físicamente" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 8,
+    "question": "¿Qué diferencia fundamental existe entre Mike y Jacob?",
+    "answers": [
+      { "id": 1, "text": "Su nivel económico" },
+      { "id": 2, "text": "La forma en que ejercen el poder emocional" },
+      { "id": 3, "text": "Su edad" },
+      { "id": 4, "text": "Su círculo social" }
+    ],
+    "correctAnswerId": 2
+  },
+  {
+    "id": 9,
+    "question": "¿Qué elemento se repite tanto en Helena como en Jacob a lo largo del libro?",
+    "answers": [
+      { "id": 1, "text": "El deseo de venganza" },
+      { "id": 2, "text": "El miedo a la soledad" },
+      { "id": 3, "text": "La dificultad para confiar debido al pasado" },
+      { "id": 4, "text": "La necesidad de aprobación social" }
+    ],
+    "correctAnswerId": 3
+  },
+  {
+    "id": 10,
+    "question": "¿Qué simboliza el título *Sombras del pasado* en la historia?",
+    "answers": [
+      { "id": 1, "text": "Secretos familiares sin resolver" },
+      { "id": 2, "text": "Los traumas que condicionan las decisiones presentes" },
+      { "id": 3, "text": "Los errores cometidos en relaciones amorosas" },
+      { "id": 4, "text": "La traición entre amigos" }
+    ],
+    "correctAnswerId": 2
+  }
+]

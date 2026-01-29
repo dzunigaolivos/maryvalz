@@ -5,6 +5,7 @@ import { FaInstagram } from 'react-icons/fa';
 import Image from 'next/image';
 import { useState, useEffect, forwardRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
+import { initializeDevice } from '@/lib/device';
 
 const purchaseLinks = [
   {
@@ -35,22 +36,22 @@ const SectionDivider = ({ icon = 'flower' }: { icon?: 'flower' | 'book' | 'heart
   const icons = {
     flower: (
       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C13.1 2 14 2.9 14 4C14 4.74 13.6 5.39 13 5.73V7H14C15.1 7 16 7.9 16 9C16 9.74 15.6 10.39 15 10.73V12H16C17.1 12 18 12.9 18 14C18 14.74 17.6 15.39 17 15.73V17H18C19.1 17 20 17.9 20 19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19C4 17.9 4.9 17 6 17H7V15.73C6.4 15.39 6 14.74 6 14C6 12.9 6.9 12 8 12H9V10.73C8.4 10.39 8 9.74 8 9C8 7.9 8.9 7 10 7H11V5.73C10.4 5.39 10 4.74 10 4C10 2.9 10.9 2 12 2Z"/>
+        <path d="M12 2C13.1 2 14 2.9 14 4C14 4.74 13.6 5.39 13 5.73V7H14C15.1 7 16 7.9 16 9C16 9.74 15.6 10.39 15 10.73V12H16C17.1 12 18 12.9 18 14C18 14.74 17.6 15.39 17 15.73V17H18C19.1 17 20 17.9 20 19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19C4 17.9 4.9 17 6 17H7V15.73C6.4 15.39 6 14.74 6 14C6 12.9 6.9 12 8 12H9V10.73C8.4 10.39 8 9.74 8 9C8 7.9 8.9 7 10 7H11V5.73C10.4 5.39 10 4.74 10 4C10 2.9 10.9 2 12 2Z" />
       </svg>
     ),
     book: (
       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M21 5C19.89 4.65 18.67 4.5 17.5 4.5C15.55 4.5 13.45 4.9 12 6C10.55 4.9 8.45 4.5 6.5 4.5C4.55 4.5 2.45 4.9 1 6V20.65C1 20.9 1.25 21.15 1.5 21.15C1.6 21.15 1.65 21.1 1.75 21.1C3.1 20.45 5.05 20 6.5 20C8.45 20 10.55 20.4 12 21.5C13.35 20.65 15.8 20 17.5 20C19.15 20 20.85 20.3 22.25 21.05C22.35 21.1 22.4 21.1 22.5 21.1C22.75 21.1 23 20.85 23 20.6V6C22.4 5.55 21.75 5.25 21 5ZM21 18.5C19.9 18.15 18.7 18 17.5 18C15.8 18 13.35 18.65 12 19.5V8C13.35 7.15 15.8 6.5 17.5 6.5C18.7 6.5 19.9 6.65 21 7V18.5Z"/>
+        <path d="M21 5C19.89 4.65 18.67 4.5 17.5 4.5C15.55 4.5 13.45 4.9 12 6C10.55 4.9 8.45 4.5 6.5 4.5C4.55 4.5 2.45 4.9 1 6V20.65C1 20.9 1.25 21.15 1.5 21.15C1.6 21.15 1.65 21.1 1.75 21.1C3.1 20.45 5.05 20 6.5 20C8.45 20 10.55 20.4 12 21.5C13.35 20.65 15.8 20 17.5 20C19.15 20 20.85 20.3 22.25 21.05C22.35 21.1 22.4 21.1 22.5 21.1C22.75 21.1 23 20.85 23 20.6V6C22.4 5.55 21.75 5.25 21 5ZM21 18.5C19.9 18.15 18.7 18 17.5 18C15.8 18 13.35 18.65 12 19.5V8C13.35 7.15 15.8 6.5 17.5 6.5C18.7 6.5 19.9 6.65 21 7V18.5Z" />
       </svg>
     ),
     heart: (
       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z"/>
+        <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5C22 12.27 18.6 15.36 13.45 20.03L12 21.35Z" />
       </svg>
     ),
     star: (
       <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z"/>
+        <path d="M12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27Z" />
       </svg>
     ),
   };
@@ -99,8 +100,15 @@ export default function Home() {
   const { width } = useWindowSize();
   const [isClient, setIsClient] = useState(false);
 
+  // Hover state for the two-panel character cards
+  const [hoveredPanel, setHoveredPanel] = useState<'left' | 'right' | null>(null);
+
   useEffect(() => {
     setIsClient(true);
+
+    // Inicializar solo device_id (token se genera al aprobar cuestionario)
+    const { deviceId } = initializeDevice();
+    console.log('Device initialized:', { deviceId });
 
     // Cargar script de Instagram embed
     const script = document.createElement('script');
@@ -305,11 +313,10 @@ export default function Home() {
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-md transition-colors text-sm font-medium ${
-                        link.isEditorial
-                          ? 'bg-gold text-white hover:bg-gold/90'
-                          : 'bg-burgundy text-cream hover:bg-burgundy/90'
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full shadow-md transition-colors text-sm font-medium ${link.isEditorial
+                        ? 'bg-gold text-white hover:bg-gold/90'
+                        : 'bg-burgundy text-cream hover:bg-burgundy/90'
+                        }`}
                     >
                       <Image
                         src={link.logo}
@@ -323,6 +330,114 @@ export default function Home() {
                   ))}
                 </div>
               </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Divisor previo ficha usuarios*/}
+      <SectionDivider icon="book" />
+      <section className="py-12 px-4 bg-gradient-to-b from-cream to-burgundy/5">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
+            {/* Left panel (Personaje A) */}
+            <motion.div
+              className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'left' ? 'blur-sm' : ''}`}
+              style={{ transition: 'filter 200ms ease' }}
+              onHoverStart={() => setHoveredPanel('left')}
+              onHoverEnd={() => setHoveredPanel(null)}
+              animate={{ flexBasis: hoveredPanel === 'left' ? '80%' : hoveredPanel === 'right' ? '20%' : '50%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              {/* background image layer (blurred) */}
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                style={{ backgroundImage: "url('/jacob_fondo.png')" }}
+              />
+              <div className="relative w-full h-full flex items-center z-10">
+                {/* left: nombre (visible solo cuando no hay hover en cualquiera) */}
+                <motion.div className="flex-1 pl-6" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                  <div className="text-white">
+                    <div className="text-2xl md:text-3xl font-bold leading-tight">Jacob</div>
+                    <div className="text-lg md:text-xl font-semibold -mt-1">Montero</div>
+                  </div>
+                </motion.div>
+
+                {/* center: caja negra (imagen) */}
+                <div className="flex-none flex items-center justify-center h-full">
+                  <motion.div
+                    className="relative h-full flex items-center justify-center overflow-hidden"
+                    role="img"
+                    aria-label="Avatar Jacob"
+                    animate={{ x: hoveredPanel === 'left' ? -60 : -50 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                  >
+                    <img src="/jacob_ficha.png" alt="Jacob" className="h-full w-auto object-contain" />
+                  </motion.div>
+                </div>
+
+                {/* right: ficha (visible solo cuando hover en este panel) */}
+                <motion.div className="flex-1 pr-6" animate={{ opacity: hoveredPanel === 'left' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                  {hoveredPanel === 'left' && (
+                    <div className="max-w-xs bg-black/50 p-4 rounded-lg">
+                      <h3 className="text-xl font-semibold text-white">Jacob Montero</h3>
+                      <p className="text-sm text-white/90 mt-2">es un empresario tecnológico de 33 años cuya vida está marcada por un pasado de violencia y abuso infantil que forjó en él una personalidad protectora pero dominante, reservado e intensamente emocional. Divorciado tras una traición que consolidó su miedo a la vulnerabilidad, Jacob vive en constante lucha entre el control y el caos interno, entre proteger y obsesionarse, cargando con el terror de repetir los patrones de violencia que sufrió.</p>
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            </motion.div>
+
+            {/* Right panel (Personaje B) */}
+            <motion.div
+              className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'right' ? 'blur-sm' : ''}`}
+              style={{ transition: 'filter 200ms ease' }}
+              onHoverStart={() => setHoveredPanel('right')}
+              onHoverEnd={() => setHoveredPanel(null)}
+              animate={{ flexBasis: hoveredPanel === 'right' ? '80%' : hoveredPanel === 'left' ? '20%' : '50%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              {/* background image layer (blurred) */}
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                style={{ backgroundImage: "url('/helena_fondo.png')" }}
+              />
+              <div className="relative w-full h-full flex items-center z-10">
+              <div className="w-full h-full flex items-center">
+                {/* left: ficha (visible only when hover on this panel) - mirrored */}
+                <motion.div className="flex-1 pl-6 text-left" animate={{ opacity: hoveredPanel === 'right' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                  {hoveredPanel === 'right' && (
+                    <div className="max-w-xs bg-black/50 p-4 rounded-lg">
+                      <h3 className="text-xl font-semibold text-white">Helena Aspen</h3>
+                      <p className="text-sm text-white/90 mt-2">Helena Aspen es diseñadora de interiores cuya infancia quedó marcada por el abuso. Empática y profundamente sensible, trabaja por reconstruir su identidad tras relaciones que reproducían dinámicas de desvalorización; poco a poco aprende a establecer límites, a sanar sin fracturarse y a priorizarse a sí misma, aun cuando ese proceso le resulta doloroso.</p>
+                    </div>
+                  )}
+                </motion.div>
+
+                {/* center: caja negra (imagen) */}
+                <div className="flex-none flex items-center justify-center h-full">
+                  <motion.div
+                    className="relative h-full flex items-center justify-center overflow-hidden"
+                    role="img"
+                    aria-label="Avatar Helena"
+                    animate={{ x: hoveredPanel === 'right' ? 60 : 0 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                  >
+                    <img src="/helena_ficha.png" alt="Helena" className="h-full w-auto object-contain" />
+                  </motion.div>
+                </div>
+
+                {/* right: nombre (visible solo cuando no hay hover) */}
+                <motion.div className="flex-1 pr-6 text-right" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                  <div className="text-white">
+                    <div className="text-2xl md:text-3xl font-bold leading-tight">Helena</div>
+                    <div className="text-lg md:text-xl font-semibold -mt-1">Aspen</div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
             </motion.div>
           </div>
         </div>
@@ -436,7 +551,102 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Wave Divider - Reader to Instagram */}
+      <SectionDivider icon='book' />
+
+      {/* Interactive Quiz Section */}
+      <section className="relative py-16 px-4 overflow-hidden">
+        {/* Background image (blurred) */}
+        <div
+          className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105 opacity-40"
+          style={{ backgroundImage: "url('/jacob_fondo.png')" }}
+        />
+        
+        {/* Content container */}
+        <div className="relative max-w-6xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gold/20 p-8 lg:p-12">
+            
+            {/* Left side - Character images */}
+            <div className="flex-shrink-0 flex gap-4 justify-center lg:justify-start">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="relative w-32 h-56 sm:w-40 sm:h-64 md:w-48 md:h-72 lg:w-56 lg:h-80"
+              >
+                <Image
+                  src="/jacob_ficha.png"
+                  alt="Jacob"
+                  fill
+                  className="object-cover object-top"
+                />
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="relative w-32 h-56 sm:w-40 sm:h-64 md:w-48 md:h-72 lg:w-56 lg:h-80"
+              >
+                <Image
+                  src="/helena_ficha.png"
+                  alt="Helena"
+                  fill
+                  className="object-cover object-top"
+                />
+              </motion.div>
+            </div>
+
+            {/* Right side - Text and button */}
+            <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left">
+              <motion.h2
+                initial={{ opacity: 0, y: -20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl font-bold text-burgundy mb-6"
+                style={{ fontFamily: "'Quintessential', cursive" }}
+              >
+                Una Sorpresa Te Espera
+              </motion.h2>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="text-warmGray leading-relaxed mb-8 font-nunito text-base md:text-lg"
+              >
+                Si has llegado hasta aquí, 
+                es porque el destino te ha elegido para adentrarte más profundamente en esta historia. 
+                Te tenemos preparado un desafío: responde correctamente 7 preguntas sobre esta historia 
+                 y desbloquearás algo extraordinario. Podrás conversar directamente con 
+                Jacob Montero o Helena Aspen, conocer sus pensamientos más íntimos y descubrir 
+                secretos que ni siquiera las páginas del libro revelan. ¿Te atreves a probarte digno 
+                de esta experiencia única?
+              </motion.p>
+
+              <motion.a
+                href="/form"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-flex items-center gap-3 px-8 py-4 bg-burgundy text-cream rounded-full font-semibold shadow-lg hover:bg-burgundy/90 transition-all font-nunito text-lg"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Aceptar el Desafío
+              </motion.a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Wave Divider - Quiz to Instagram */}
       <SectionDivider icon='heart' />
 
       {/* Instagram Embed Section */}
