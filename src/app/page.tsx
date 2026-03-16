@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { FaInstagram } from 'react-icons/fa';
 import Image from 'next/image';
-import { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect, useRef, forwardRef } from 'react';
 import HTMLFlipBook from 'react-pageflip';
 import { initializeDevice } from '@/lib/device';
 
@@ -96,12 +96,85 @@ function useWindowSize() {
   return size;
 }
 
+const navSections = [
+  { id: 'inicio', label: 'Inicio' },
+  { id: 'sobre-mi', label: 'Sobre mí' },
+  { id: 'libro', label: 'El libro' },
+  { id: 'personajes', label: 'Personajes' },
+  { id: 'leer', label: 'Leer' },
+  { id: 'desafio', label: 'Desafío' },
+  { id: 'novedades', label: 'Redes' },
+];
+
+// Todas las secciones para el snap scroll (incluye las que no están en el nav)
+const snapSectionIds = ['inicio', 'sobre-mi', 'libro', 'personajes', 'leer', 'desafio', 'novedades', 'footer'];
+
 export default function Home() {
   const { width } = useWindowSize();
   const [isClient, setIsClient] = useState(false);
 
   // Hover state for the two-panel character cards
   const [hoveredPanel, setHoveredPanel] = useState<'left' | 'right' | null>(null);
+
+  // UX enhancements state
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState('inicio');
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Refs for section-snap scroll
+  const isSnapping = useRef(false);
+  const activeSectionRef = useRef('inicio');
+
+  useEffect(() => {
+    function handleScroll() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? (scrollTop / docHeight) * 100 : 0);
+      setShowBackToTop(scrollTop > 400);
+
+      // Actualiza el ref con TODAS las secciones snap (para el wheel handler)
+      for (const id of [...snapSectionIds].reverse()) {
+        const el = document.getElementById(id);
+        if (el && scrollTop >= el.offsetTop - 120) {
+          activeSectionRef.current = id;
+          break;
+        }
+      }
+      // Actualiza el estado del nav solo con las secciones visibles en él
+      for (const section of [...navSections].reverse()) {
+        const el = document.getElementById(section.id);
+        if (el && scrollTop >= el.offsetTop - 120) {
+          setActiveSection(section.id);
+          break;
+        }
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    function goToSection(index: number) {
+      const clamped = Math.max(0, Math.min(snapSectionIds.length - 1, index));
+      const el = document.getElementById(snapSectionIds[clamped]);
+      if (el) {
+        isSnapping.current = true;
+        window.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+        setTimeout(() => { isSnapping.current = false; }, 900);
+      }
+    }
+
+    function handleWheel(e: WheelEvent) {
+      e.preventDefault();
+      if (isSnapping.current) return;
+      const currentIdx = snapSectionIds.indexOf(activeSectionRef.current);
+      const direction = e.deltaY > 0 ? 1 : -1;
+      goToSection(currentIdx + direction);
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, []);
 
   useEffect(() => {
     setIsClient(true);
@@ -137,8 +210,55 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream to-ivory">
+
+      {/* Scroll progress bar */}
+      <div className="fixed top-0 left-0 right-0 h-0.5 z-50 bg-obsidian/10">
+        <div
+          className="h-full bg-gold transition-all duration-75"
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+
+      {/* Side progress dots */}
+      <div className="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col gap-3">
+        {navSections.map((s) => (
+          <button
+            key={s.id}
+            title={s.label}
+            onClick={() => {
+              const el = document.getElementById(s.id);
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="group flex items-center justify-end gap-2"
+          >
+            <span className={`text-xs font-medium transition-all duration-200 opacity-0 group-hover:opacity-100 ${activeSection === s.id ? 'text-gold' : 'text-warmGray'}`}>
+              {s.label}
+            </span>
+            <span className={`block rounded-full transition-all duration-300 ${
+              activeSection === s.id
+                ? 'w-3 h-3 bg-gold'
+                : 'w-2 h-2 bg-warmGray/40 hover:bg-gold/60'
+            }`} />
+          </button>
+        ))}
+      </div>
+
+      {/* Back to top button */}
+      <motion.button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        initial={false}
+        animate={{ opacity: showBackToTop ? 1 : 0, y: showBackToTop ? 0 : 16, pointerEvents: showBackToTop ? 'auto' : 'none' }}
+        transition={{ duration: 0.25 }}
+        className="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-full bg-obsidian border border-gold/30 text-gold shadow-lg flex items-center justify-center hover:bg-obsidian/80 transition-colors"
+        aria-label="Volver arriba"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </motion.button>
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16">
+      <section id="inicio" className="relative min-h-screen flex flex-col items-center justify-center px-4 py-16">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -240,7 +360,7 @@ export default function Home() {
       <SectionDivider icon="star" />
 
       {/* About the Author Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
+      <section id="sobre-mi" className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
         <div className="max-w-4xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -322,7 +442,7 @@ export default function Home() {
       <SectionDivider icon="book" />
 
       {/* Book Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
+      <section id="libro" className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
         <div className="max-w-6xl mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -417,9 +537,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Divisor previo ficha usuarios*/}
-      <SectionDivider icon="book" />
-      <section className="py-12 px-4 bg-gradient-to-b from-cream to-burgundy/5">
+      <section id="personajes" className="py-12 px-4 bg-gradient-to-b from-cream to-burgundy/5">
+        {/* Divisor visible al top al hacer snap */}
+        <SectionDivider icon="book" />
         <div className="max-w-6xl mx-auto">
           <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
             {/* Left panel (Personaje A) */}
@@ -529,7 +649,7 @@ export default function Home() {
       <SectionDivider icon='book' />
 
       {/* Interactive Book Reader Section */}
-      <section className="py-20 px-4 bg-gradient-to-b from-cream to-burgundy/5">
+      <section id="leer" className="py-20 px-4 bg-gradient-to-b from-cream to-burgundy/5">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -636,7 +756,7 @@ export default function Home() {
       <SectionDivider icon='book' />
 
       {/* Interactive Quiz Section */}
-      <section className="relative py-16 px-4 overflow-hidden">
+      <section id="desafio" className="relative py-16 px-4 overflow-hidden">
         {/* Background image (blurred) */}
         <div
           className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105 opacity-40"
@@ -732,7 +852,7 @@ export default function Home() {
       <SectionDivider icon='heart' />
 
       {/* Instagram Embed Section */}
-      <section className="py-16 px-4 bg-gradient-to-b from-cream to-white">
+      <section id="novedades" className="py-16 px-4 bg-gradient-to-b from-cream to-white">
         <div className="max-w-sm mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -839,7 +959,7 @@ export default function Home() {
 
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-obsidian text-cream border-t border-gold/20">
+      <footer id="footer" className="py-12 px-4 bg-obsidian text-cream border-t border-gold/20">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl font-bold mb-4 text-gold" style={{ fontFamily: "'Quintessential', cursive" }}>
             Mary.Valz
