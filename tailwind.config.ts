@@ -17,6 +17,7 @@ const config: Config = {
         cream: '#FFFDD0',
         ivory: '#FFFFF0',
         warmGray: '#6B5B5B',
+        obsidian: '#1A0A0E',
       },
       fontFamily: {
         quintessential: ['"Quintessential"', 'cursive'],

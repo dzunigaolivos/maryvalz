@@ -236,8 +236,90 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Wave Divider - Hero to Book */}
+      {/* Wave Divider - Hero to About */}
       <SectionDivider icon="star" />
+
+      {/* About the Author Section */}
+      <section className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
+        <div className="max-w-4xl mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-burgundy text-center mb-16"
+            style={{ fontFamily: "'Quintessential', cursive" }}
+          >
+            Un poco sobre mí
+          </motion.h2>
+
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            {/* Photo */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex-shrink-0 flex flex-col items-center gap-4"
+            >
+              <div className="relative w-48 h-48 md:w-56 md:h-56 rounded-full overflow-hidden border-4 border-gold shadow-xl">
+                <Image
+                  src="/maryValz.jpeg"
+                  alt="Mary Valz"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Inspirations */}
+              <div className="text-center">
+                <p className="text-xs uppercase tracking-widest text-gold/70 font-semibold mb-2">Inspirada por</p>
+                <div className="flex gap-2 justify-center flex-wrap">
+                  {['Megan Maxwell', 'Jodi Ellen Malpas'].map((name) => (
+                    <span
+                      key={name}
+                      className="px-3 py-1 rounded-full text-xs font-medium bg-burgundy/10 text-burgundy border border-burgundy/20"
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bio text */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="flex-1"
+            >
+              {/* Decorative quote */}
+              <svg className="w-10 h-10 text-gold/40 mb-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z" />
+              </svg>
+
+              <div className="space-y-4 text-warmGray leading-relaxed text-base md:text-lg">
+                <p>
+                  Chilena, nació en <span className="text-burgundy font-semibold">1988</span>. Estudió Diseño Gráfico en 2011, aunque buscó nuevos horizontes laborales después de sus estudios.
+                </p>
+                <p>
+                  Una lectora ávida que, influenciada por sus escritoras favoritas, descubre su pasión por escribir. Es entonces cuando comienza a trabajar en esta historia, con personajes cercanos y una trama de búsqueda por reparar aquello que en el pasado se rompió.
+                </p>
+              </div>
+
+              {/* Divider line + signature */}
+              <div className="mt-8 flex items-center gap-4">
+                <div className="flex-1 h-px bg-gold/30" />
+                <span className="text-burgundy/60 text-lg italic" style={{ fontFamily: "'Quintessential', cursive" }}>
+                  Mary Valz
+                </span>
+                <div className="flex-1 h-px bg-gold/30" />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Divider - About to Book */}
+      <SectionDivider icon="book" />
 
       {/* Book Section */}
       <section className="py-20 px-4 bg-gradient-to-b from-ivory to-cream">
@@ -560,11 +642,11 @@ export default function Home() {
           className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105 opacity-40"
           style={{ backgroundImage: "url('/jacob_fondo.png')" }}
         />
-        
+
         {/* Content container */}
         <div className="relative max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-12 bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl border border-gold/20 p-8 lg:p-12">
-            
+
             {/* Left side - Character images */}
             <div className="flex-shrink-0 flex gap-4 justify-center lg:justify-start">
               <motion.div
@@ -581,7 +663,7 @@ export default function Home() {
                   className="object-cover object-top"
                 />
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -609,7 +691,7 @@ export default function Home() {
               >
                 Una Sorpresa Te Espera
               </motion.h2>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -617,12 +699,12 @@ export default function Home() {
                 transition={{ delay: 0.2 }}
                 className="text-warmGray leading-relaxed mb-8 font-nunito text-base md:text-lg"
               >
-                Si has llegado hasta aquí, 
-                es porque el destino te ha elegido para adentrarte más profundamente en esta historia. 
-                Te tenemos preparado un desafío: responde correctamente 7 preguntas sobre esta historia 
-                 y desbloquearás algo extraordinario. Podrás conversar directamente con 
-                Jacob Montero o Helena Aspen, conocer sus pensamientos más íntimos y descubrir 
-                secretos que ni siquiera las páginas del libro revelan. ¿Te atreves a probarte digno 
+                Si has llegado hasta aquí,
+                es porque el destino te ha elegido para adentrarte más profundamente en esta historia.
+                Te tenemos preparado un desafío: responde correctamente 7 preguntas sobre esta historia
+                 y desbloquearás algo extraordinario. Podrás conversar directamente con
+                Jacob Montero o Helena Aspen, conocer sus pensamientos más íntimos y descubrir
+                secretos que ni siquiera las páginas del libro revelan. ¿Te atreves a probarte digno
                 de esta experiencia única?
               </motion.p>
 
@@ -757,21 +839,21 @@ export default function Home() {
 
 
       {/* Footer */}
-      <footer className="py-12 px-4 bg-burgundy text-cream">
+      <footer className="py-12 px-4 bg-obsidian text-cream border-t border-gold/20">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Quintessential', cursive" }}>
+          <h2 className="text-2xl font-bold mb-4 text-gold" style={{ fontFamily: "'Quintessential', cursive" }}>
             Mary.Valz
           </h2>
           <a
             href="https://instagram.com/mary.valz"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-cream/70 hover:text-gold transition-colors mb-6"
+            className="inline-flex items-center gap-2 text-cream/50 hover:text-gold transition-colors mb-6"
           >
             <FaInstagram className="w-6 h-6" />
             <span>@mary.valz</span>
           </a>
-          <p className="text-cream/60 text-sm">
+          <p className="text-cream/30 text-sm">
             &copy; {new Date().getFullYear()} MaryValz. Todos los derechos reservados.
           </p>
         </div>
