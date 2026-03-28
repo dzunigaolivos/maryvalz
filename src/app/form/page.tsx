@@ -5,6 +5,17 @@ import { useRouter } from 'next/navigation';
 import { getDeviceCredentials, generateAndSaveToken } from '@/lib/device';
 import { motion } from 'framer-motion';
 
+function useIsMobile() {
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+    return isMobile;
+}
+
 interface Answer {
     id: number;
     text: string;
@@ -37,6 +48,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export default function FormPage() {
     const router = useRouter();
+    const isMobile = useIsMobile();
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -183,9 +195,8 @@ export default function FormPage() {
 
             // Verificar si ya tiene 7 correctas
             if (newCorrectCount >= REQUIRED_CORRECT) {
-                // Registrar dispositivo antes de mostrar pantalla final
                 await registerDeviceAccess();
-                setIsFinished(true);
+                setHasAccess(true);
                 return;
             }
 
@@ -220,7 +231,7 @@ export default function FormPage() {
     if (hasAccess) {
         return (
             <div className="min-h-screen bg-gradient-to-b from-cream to-ivory flex items-center justify-center p-0 md:p-8">
-                <div className="w-full min-w-screen  bg-white rounded-2xl shadow-xl border border-gold/20 p-8 text-center">
+                <div className="w-full min-w-screen bg-white rounded-2xl shadow-xl border border-gold/20 px-3 py-6 md:p-8 text-center">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/20 flex items-center justify-center">
                         <svg
                             className="w-8 h-8 text-gold"
@@ -245,139 +256,180 @@ export default function FormPage() {
                     <p className="text-warmGray font-nunito mb-6">
                         Tu dispositivo ya está registrado y tienes acceso al contenido exclusivo.
                     </p>
-                    <div>
-                        <section className="py-12 px-4 bg-gradient-to-b from-cream to-burgundy/5">
-                            <div className="max-w-6xl mx-auto">
-                                <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
-                                    {/* Left panel (Personaje A) */}
-                                    <motion.div
-                                        className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'left' ? 'blur-sm' : ''}`}
-                                        style={{ transition: 'filter 200ms ease' }}
-                                        onHoverStart={() => setHoveredPanel('left')}
-                                        onHoverEnd={() => setHoveredPanel(null)}
-                                        animate={{ flexBasis: hoveredPanel === 'left' ? '80%' : hoveredPanel === 'right' ? '20%' : '50%' }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                    >
-                                        {/* background image layer (blurred) */}
-                                        <div
-                                            aria-hidden
-                                            className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
-                                            style={{ backgroundImage: "url('/jacob_fondo.png')" }}
-                                        />
-                                        <div className="relative w-full h-full flex items-center z-10">
-                                            {/* left: nombre (visible solo cuando no hay hover en cualquiera) */}
-                                            <motion.div className="flex-1 pl-6" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
-                                                <div className="text-white">
-                                                    <div className="text-2xl md:text-3xl font-bold leading-tight">Jacob</div>
-                                                    <div className="text-lg md:text-xl font-semibold -mt-1">Montero</div>
-                                                </div>
-                                            </motion.div>
+                    <div className="py-4">
+                        {isMobile ? (
+                            /* Mobile: cards verticales con botón visible */
+                            <div className="flex flex-col gap-5" style={{ paddingTop: '36px' }}>
+                                {/* Jacob card */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: -50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+                                    className="relative flex rounded-2xl shadow-xl border border-white/10"
+                                    style={{ minHeight: '170px', marginTop: '36px' }}
+                                >
+                                    <div aria-hidden className="absolute inset-0 rounded-2xl overflow-hidden">
+                                        <div className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105" style={{ backgroundImage: "url('/jacob_fondo.png')" }} />
+                                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/55 to-black/75" />
+                                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+                                    </div>
+                                    <div className="relative z-10 flex w-full">
+                                        <div className="flex-shrink-0 flex items-end" style={{ marginTop: '-36px' }}>
+                                            <img src="/jacob_ficha.png" alt="Jacob" className="h-56 w-auto object-contain drop-shadow-2xl" style={{ viewTransitionName: 'character-image-jacob' }} />
+                                        </div>
+                                        <div className="flex flex-col justify-center px-3 py-4 gap-2 text-left">
+                                            <span className="text-gold/80 text-[10px] uppercase tracking-widest font-semibold">Protagonista</span>
+                                            <h3 className="text-xl font-bold text-white leading-tight" style={{ fontFamily: "'Quintessential', cursive" }}>
+                                                Jacob<br />Montero
+                                            </h3>
+                                            <div className="w-8 h-px bg-gold/60" />
+                                            <p className="text-xs text-white/80 leading-relaxed">
+                                                Empresario de 33 años marcado por un pasado de violencia. Vive en constante lucha entre el control y el caos interno.
+                                            </p>
+                                            <button
+                                                onClick={() => handleConverse('jacob')}
+                                                disabled={!!selectedCharacter}
+                                                className={`mt-1 self-start px-4 py-2 rounded-full text-sm font-semibold transition-colors ${selectedCharacter === 'jacob' ? 'bg-burgundy text-cream' : 'bg-burgundy/90 text-cream hover:bg-burgundy'}`}
+                                            >
+                                                Conversemos
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
 
-                                            {/* center: caja negra (imagen) */}
-                                            <div className="flex-none flex items-center justify-center h-full">
-                                                <motion.div
-                                                    className="relative h-full flex items-center justify-center overflow-hidden"
-                                                    role="img"
-                                                    aria-label="Avatar Jacob"
-                                                    animate={{ x: hoveredPanel === 'left' ? -60 : -50 }}
-                                                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                                                >
-                                                    <img
-                                                                        src="/jacob_ficha.png"
-                                                                        alt="Jacob"
-                                                                        className="h-full w-auto object-contain"
-                                                                        style={{ viewTransitionName: 'character-image-jacob' }}
-                                                                    />
-                                                </motion.div>
+                                {/* Helena card */}
+                                <motion.div
+                                    initial={{ opacity: 0, x: 50 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.12 }}
+                                    className="relative flex rounded-2xl shadow-xl border border-white/10"
+                                    style={{ minHeight: '170px', marginTop: '36px' }}
+                                >
+                                    <div aria-hidden className="absolute inset-0 rounded-2xl overflow-hidden">
+                                        <div className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105" style={{ backgroundImage: "url('/helena_fondo.png')" }} />
+                                        <div className="absolute inset-0 bg-gradient-to-l from-black/20 via-black/55 to-black/75" />
+                                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
+                                    </div>
+                                    <div className="relative z-10 flex flex-row-reverse w-full">
+                                        <div className="flex-shrink-0 flex items-end" style={{ marginTop: '-36px' }}>
+                                            <img src="/helena_ficha.png" alt="Helena" className="h-56 w-auto object-contain drop-shadow-2xl" style={{ viewTransitionName: 'character-image-helena' }} />
+                                        </div>
+                                        <div className="flex flex-col justify-center px-3 py-4 gap-2 text-right flex-1">
+                                            <span className="text-gold/80 text-[10px] uppercase tracking-widest font-semibold">Protagonista</span>
+                                            <h3 className="text-xl font-bold text-white leading-tight" style={{ fontFamily: "'Quintessential', cursive" }}>
+                                                Helena<br />Aspen
+                                            </h3>
+                                            <div className="w-8 h-px bg-gold/60 ml-auto" />
+                                            <p className="text-xs text-white/80 leading-relaxed">
+                                                Diseñadora de interiores marcada por el abuso. Aprende a reconstruir su identidad y a priorizarse a sí misma.
+                                            </p>
+                                            <button
+                                                onClick={() => handleConverse('helena')}
+                                                disabled={!!selectedCharacter}
+                                                className={`mt-1 self-end px-4 py-2 rounded-full text-sm font-semibold transition-colors ${selectedCharacter === 'helena' ? 'bg-gold text-white' : 'bg-gold/90 text-white hover:bg-gold'}`}
+                                            >
+                                                Conversemos
+                                            </button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            </div>
+                        ) : (
+                            /* Desktop: panel animado con hover */
+                            <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
+                                {/* Left panel (Jacob) */}
+                                <motion.div
+                                    className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'left' ? 'blur-sm' : ''}`}
+                                    style={{ transition: 'filter 200ms ease' }}
+                                    onHoverStart={() => setHoveredPanel('left')}
+                                    onHoverEnd={() => setHoveredPanel(null)}
+                                    animate={{ flexBasis: hoveredPanel === 'left' ? '80%' : hoveredPanel === 'right' ? '20%' : '50%' }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                >
+                                    <div aria-hidden className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105" style={{ backgroundImage: "url('/jacob_fondo.png')" }} />
+                                    <div className="relative w-full h-full flex items-center z-10">
+                                        <motion.div className="flex-1 pl-6" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                                            <div className="text-white">
+                                                <div className="text-2xl md:text-3xl font-bold leading-tight">Jacob</div>
+                                                <div className="text-lg md:text-xl font-semibold -mt-1">Montero</div>
                                             </div>
+                                        </motion.div>
+                                        <div className="flex-none flex items-center justify-center h-full">
+                                            <motion.div
+                                                className="relative h-full flex items-center justify-center overflow-hidden"
+                                                animate={{ x: hoveredPanel === 'left' ? -60 : -50 }}
+                                                transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                                            >
+                                                <img src="/jacob_ficha.png" alt="Jacob" className="h-full w-auto object-contain" style={{ viewTransitionName: 'character-image-jacob' }} />
+                                            </motion.div>
+                                        </div>
+                                        <motion.div className="flex-1 pr-6" animate={{ opacity: hoveredPanel === 'left' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                                            {hoveredPanel === 'left' && (
+                                                <div className="max-w-xs bg-black/50 p-4 rounded-lg">
+                                                    <h3 className="text-xl font-semibold text-white">Jacob Montero</h3>
+                                                    <div className="mt-2">
+                                                        <button
+                                                            onClick={() => handleConverse('jacob')}
+                                                            disabled={!!selectedCharacter}
+                                                            className={`px-4 py-2 rounded-full font-semibold transition-colors ${selectedCharacter === 'jacob' ? 'bg-burgundy text-cream' : 'bg-burgundy/90 text-cream hover:bg-burgundy'}`}
+                                                        >
+                                                            Conversemos
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </motion.div>
+                                    </div>
+                                </motion.div>
 
-                                            {/* right: ficha (visible solo cuando hover en este panel) */}
-                                            <motion.div className="flex-1 pr-6" animate={{ opacity: hoveredPanel === 'left' ? 1 : 0 }} transition={{ duration: 0.18 }}>
-                                                {hoveredPanel === 'left' && (
+                                {/* Right panel (Helena) */}
+                                <motion.div
+                                    className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'right' ? 'blur-sm' : ''}`}
+                                    style={{ transition: 'filter 200ms ease' }}
+                                    onHoverStart={() => setHoveredPanel('right')}
+                                    onHoverEnd={() => setHoveredPanel(null)}
+                                    animate={{ flexBasis: hoveredPanel === 'right' ? '80%' : hoveredPanel === 'left' ? '20%' : '50%' }}
+                                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                >
+                                    <div aria-hidden className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105" style={{ backgroundImage: "url('/helena_fondo.png')" }} />
+                                    <div className="relative w-full h-full flex items-center z-10">
+                                        <div className="w-full h-full flex items-center">
+                                            <motion.div className="flex-1 pl-6 text-left" animate={{ opacity: hoveredPanel === 'right' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                                                {hoveredPanel === 'right' && (
                                                     <div className="max-w-xs bg-black/50 p-4 rounded-lg">
-                                                        <h3 className="text-xl font-semibold text-white">Jacob Montero</h3>
+                                                        <h3 className="text-xl font-semibold text-white">Helena Aspen</h3>
                                                         <div className="mt-2">
                                                             <button
-                                                                onClick={() => handleConverse('jacob')}
+                                                                onClick={() => handleConverse('helena')}
                                                                 disabled={!!selectedCharacter}
-                                                                aria-pressed={selectedCharacter === 'jacob'}
-                                                                className={`px-4 py-2 rounded-full font-semibold transition-colors ${selectedCharacter === 'jacob' ? 'bg-burgundy text-cream' : 'bg-burgundy/90 text-cream hover:bg-burgundy'}`}>
+                                                                className={`px-4 py-2 rounded-full font-semibold transition-colors ${selectedCharacter === 'helena' ? 'bg-gold text-white' : 'bg-gold/90 text-white hover:bg-gold'}`}
+                                                            >
                                                                 Conversemos
                                                             </button>
                                                         </div>
                                                     </div>
                                                 )}
                                             </motion.div>
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Right panel (Personaje B) */}
-                                    <motion.div
-                                        className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'right' ? 'blur-sm' : ''}`}
-                                        style={{ transition: 'filter 200ms ease' }}
-                                        onHoverStart={() => setHoveredPanel('right')}
-                                        onHoverEnd={() => setHoveredPanel(null)}
-                                        animate={{ flexBasis: hoveredPanel === 'right' ? '80%' : hoveredPanel === 'left' ? '20%' : '50%' }}
-                                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                                    >
-                                        {/* background image layer (blurred) */}
-                                        <div
-                                            aria-hidden
-                                            className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
-                                            style={{ backgroundImage: "url('/helena_fondo.png')" }}
-                                        />
-                                        <div className="relative w-full h-full flex items-center z-10">
-                                            <div className="w-full h-full flex items-center">
-                                                {/* left: ficha (visible only when hover on this panel) - mirrored */}
-                                                <motion.div className="flex-1 pl-6 text-left" animate={{ opacity: hoveredPanel === 'right' ? 1 : 0 }} transition={{ duration: 0.18 }}>
-                                                    {hoveredPanel === 'right' && (
-                                                        <div className="max-w-xs bg-black/50 p-4 rounded-lg">
-                                                            <h3 className="text-xl font-semibold text-white">Helena Aspen</h3>
-                                                            <div className="mt-2">
-                                                                <button
-                                                                    onClick={() => handleConverse('helena')}
-                                                                    disabled={!!selectedCharacter}
-                                                                    aria-pressed={selectedCharacter === 'helena'}
-                                                                    className={`px-4 py-2 rounded-full font-semibold transition-colors ${selectedCharacter === 'helena' ? 'bg-gold text-white' : 'bg-gold/90 text-white hover:bg-gold'}`}>
-                                                                    Conversemos
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </motion.div>
-
-                                                {/* center: caja negra (imagen) */}
-                                                <div className="flex-none flex items-center justify-center h-full">
-                                                    <motion.div
-                                                        className="relative h-full flex items-center justify-center overflow-hidden"
-                                                        role="img"
-                                                        aria-label="Avatar Helena"
-                                                        animate={{ x: hoveredPanel === 'right' ? 60 : 0 }}
-                                                        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                                                    >
-                                                        <img
-                                                                        src="/helena_ficha.png"
-                                                                        alt="Helena"
-                                                                        className="h-full w-auto object-contain"
-                                                                        style={{ viewTransitionName: 'character-image-helena' }}
-                                                                    />
-                                                    </motion.div>
-                                                </div>
-
-                                                {/* right: nombre (visible solo cuando no hay hover) */}
-                                                <motion.div className="flex-1 pr-6 text-right" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
-                                                    <div className="text-white">
-                                                        <div className="text-2xl md:text-3xl font-bold leading-tight">Helena</div>
-                                                        <div className="text-lg md:text-xl font-semibold -mt-1">Aspen</div>
-                                                    </div>
+                                            <div className="flex-none flex items-center justify-center h-full">
+                                                <motion.div
+                                                    className="relative h-full flex items-center justify-center overflow-hidden"
+                                                    animate={{ x: hoveredPanel === 'right' ? 60 : 0 }}
+                                                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                                                >
+                                                    <img src="/helena_ficha.png" alt="Helena" className="h-full w-auto object-contain" style={{ viewTransitionName: 'character-image-helena' }} />
                                                 </motion.div>
                                             </div>
+                                            <motion.div className="flex-1 pr-6 text-right" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                                                <div className="text-white">
+                                                    <div className="text-2xl md:text-3xl font-bold leading-tight">Helena</div>
+                                                    <div className="text-lg md:text-xl font-semibold -mt-1">Aspen</div>
+                                                </div>
+                                            </motion.div>
                                         </div>
-                                    </motion.div>
-                                </div>
+                                    </div>
+                                </motion.div>
                             </div>
-                        </section>
-
+                        )}
                     </div>
                     <button
                         onClick={() => router.push('/')}

@@ -111,6 +111,7 @@ const snapSectionIds = ['inicio', 'sobre-mi', 'libro', 'personajes', 'leer', 'de
 
 export default function Home() {
   const { width } = useWindowSize();
+  const isMobile = width > 0 && width < 768;
   const [isClient, setIsClient] = useState(false);
 
   // Hover state for the two-panel character cards
@@ -541,107 +542,177 @@ export default function Home() {
         {/* Divisor visible al top al hacer snap */}
         <SectionDivider icon="book" />
         <div className="max-w-6xl mx-auto">
-          <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
-            {/* Left panel (Personaje A) */}
-            <motion.div
-              className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'left' ? 'blur-sm' : ''}`}
-              style={{ transition: 'filter 200ms ease' }}
-              onHoverStart={() => setHoveredPanel('left')}
-              onHoverEnd={() => setHoveredPanel(null)}
-              animate={{ flexBasis: hoveredPanel === 'left' ? '80%' : hoveredPanel === 'right' ? '20%' : '50%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            >
-              {/* background image layer (blurred) */}
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
-                style={{ backgroundImage: "url('/jacob_fondo.png')" }}
-              />
-              <div className="relative w-full h-full flex items-center z-10">
-                {/* left: nombre (visible solo cuando no hay hover en cualquiera) */}
-                <motion.div className="flex-1 pl-6" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
-                  <div className="text-white">
-                    <div className="text-2xl md:text-3xl font-bold leading-tight">Jacob</div>
-                    <div className="text-lg md:text-xl font-semibold -mt-1">Montero</div>
-                  </div>
-                </motion.div>
-
-                {/* center: caja negra (imagen) */}
-                <div className="flex-none flex items-center justify-center h-full">
-                  <motion.div
-                    className="relative h-full flex items-center justify-center overflow-hidden"
-                    role="img"
-                    aria-label="Avatar Jacob"
-                    animate={{ x: hoveredPanel === 'left' ? -60 : -50 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                  >
-                    <img src="/jacob_ficha.png" alt="Jacob" className="h-full w-auto object-contain" />
-                  </motion.div>
+          {isMobile ? (
+            /* Mobile layout: two vertical cards with bio visible */
+            <div className="flex flex-col gap-5">
+              {/* Jacob card — entra desde la izquierda */}
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 200, damping: 24 }}
+                className="relative flex rounded-2xl shadow-xl border border-white/10"
+                style={{ minHeight: '170px', marginTop: '24px' }}
+              >
+                {/* Fondo blur — overflow-hidden aquí para recortar el blur/gradiente */}
+                <div aria-hidden className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                    style={{ backgroundImage: "url('/jacob_fondo.png')" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/55 to-black/75" />
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
                 </div>
 
-                {/* right: ficha (visible solo cuando hover en este panel) */}
-                <motion.div className="flex-1 pr-6" animate={{ opacity: hoveredPanel === 'left' ? 1 : 0 }} transition={{ duration: 0.18 }}>
-                  {hoveredPanel === 'left' && (
-                    <div className="max-w-xs bg-black/50 p-4 rounded-lg">
-                      <h3 className="text-xl font-semibold text-white">Jacob Montero</h3>
-                      <p className="text-sm text-white/90 mt-2">es un empresario tecnológico de 33 años cuya vida está marcada por un pasado de violencia y abuso infantil que forjó en él una personalidad protectora pero dominante, reservado e intensamente emocional. Divorciado tras una traición que consolidó su miedo a la vulnerabilidad, Jacob vive en constante lucha entre el control y el caos interno, entre proteger y obsesionarse, cargando con el terror de repetir los patrones de violencia que sufrió.</p>
-                    </div>
-                  )}
-                </motion.div>
-              </div>
-            </motion.div>
+                <div className="relative z-10 flex w-full">
+                  {/* Imagen sobresale por arriba con margin-top negativo */}
+                  <div className="flex-shrink-0 flex items-end" style={{ marginTop: '-24px' }}>
+                    <img src="/jacob_ficha.png" alt="Jacob" className="h-52 w-auto object-contain drop-shadow-2xl" />
+                  </div>
+                  {/* Texto */}
+                  <div className="flex flex-col justify-center px-4 py-4">
+                    <span className="text-gold/80 text-[10px] uppercase tracking-widest font-semibold mb-1">Protagonista</span>
+                    <h3 className="text-xl font-bold text-white leading-tight mb-2" style={{ fontFamily: "'Quintessential', cursive" }}>
+                      Jacob<br />Montero
+                    </h3>
+                    <div className="w-8 h-px bg-gold/60 mb-2" />
+                    <p className="text-xs text-white/80 leading-relaxed">
+                      Empresario de 33 años marcado por un pasado de violencia. Vive en constante lucha entre el control y el caos interno, cargando el terror de repetir los patrones que sufrió.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
 
-            {/* Right panel (Personaje B) */}
-            <motion.div
-              className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'right' ? 'blur-sm' : ''}`}
-              style={{ transition: 'filter 200ms ease' }}
-              onHoverStart={() => setHoveredPanel('right')}
-              onHoverEnd={() => setHoveredPanel(null)}
-              animate={{ flexBasis: hoveredPanel === 'right' ? '80%' : hoveredPanel === 'left' ? '20%' : '50%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            >
-              {/* background image layer (blurred) */}
-              <div
-                aria-hidden
-                className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
-                style={{ backgroundImage: "url('/helena_fondo.png')" }}
-              />
-              <div className="relative w-full h-full flex items-center z-10">
-              <div className="w-full h-full flex items-center">
-                {/* left: ficha (visible only when hover on this panel) - mirrored */}
-                <motion.div className="flex-1 pl-6 text-left" animate={{ opacity: hoveredPanel === 'right' ? 1 : 0 }} transition={{ duration: 0.18 }}>
-                  {hoveredPanel === 'right' && (
-                    <div className="max-w-xs bg-black/50 p-4 rounded-lg">
-                      <h3 className="text-xl font-semibold text-white">Helena Aspen</h3>
-                      <p className="text-sm text-white/90 mt-2">Helena Aspen es diseñadora de interiores cuya infancia quedó marcada por el abuso. Empática y profundamente sensible, trabaja por reconstruir su identidad tras relaciones que reproducían dinámicas de desvalorización; poco a poco aprende a establecer límites, a sanar sin fracturarse y a priorizarse a sí misma, aun cuando ese proceso le resulta doloroso.</p>
-                    </div>
-                  )}
-                </motion.div>
-
-                {/* center: caja negra (imagen) */}
-                <div className="flex-none flex items-center justify-center h-full">
-                  <motion.div
-                    className="relative h-full flex items-center justify-center overflow-hidden"
-                    role="img"
-                    aria-label="Avatar Helena"
-                    animate={{ x: hoveredPanel === 'right' ? 60 : 0 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 28 }}
-                  >
-                    <img src="/helena_ficha.png" alt="Helena" className="h-full w-auto object-contain" />
-                  </motion.div>
+              {/* Helena card — entra desde la derecha */}
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ type: 'spring', stiffness: 200, damping: 24, delay: 0.12 }}
+                className="relative flex rounded-2xl shadow-xl border border-white/10"
+                style={{ minHeight: '170px', marginTop: '24px' }}
+              >
+                {/* Fondo blur — overflow-hidden aquí para recortar el blur/gradiente */}
+                <div aria-hidden className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                    style={{ backgroundImage: "url('/helena_fondo.png')" }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-l from-black/20 via-black/55 to-black/75" />
+                  <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-gold via-gold/60 to-transparent" />
                 </div>
 
-                {/* right: nombre (visible solo cuando no hay hover) */}
-                <motion.div className="flex-1 pr-6 text-right" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
-                  <div className="text-white">
-                    <div className="text-2xl md:text-3xl font-bold leading-tight">Helena</div>
-                    <div className="text-lg md:text-xl font-semibold -mt-1">Aspen</div>
+                <div className="relative z-10 flex flex-row-reverse w-full">
+                  {/* Imagen sobresale por arriba con margin-top negativo */}
+                  <div className="flex-shrink-0 flex items-end" style={{ marginTop: '-24px' }}>
+                    <img src="/helena_ficha.png" alt="Helena" className="h-52 w-auto object-contain drop-shadow-2xl" />
                   </div>
-                </motion.div>
-              </div>
+                  {/* Texto */}
+                  <div className="flex flex-col justify-center px-4 py-4 text-right flex-1">
+                    <span className="text-gold/80 text-[10px] uppercase tracking-widest font-semibold mb-1">Protagonista</span>
+                    <h3 className="text-xl font-bold text-white leading-tight mb-2" style={{ fontFamily: "'Quintessential', cursive" }}>
+                      Helena<br />Aspen
+                    </h3>
+                    <div className="w-8 h-px bg-gold/60 mb-2 ml-auto" />
+                    <p className="text-xs text-white/80 leading-relaxed">
+                      Diseñadora de interiores marcada por el abuso. Empática y sensible, aprende a reconstruir su identidad, a establecer límites y a priorizarse a sí misma.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            </motion.div>
-          </div>
+          ) : (
+            /* Desktop layout: animated two-panel hover */
+            <div className="flex w-full h-72 rounded-xl overflow-hidden shadow-md">
+              {/* Left panel (Personaje A) */}
+              <motion.div
+                className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'left' ? 'blur-sm' : ''}`}
+                style={{ transition: 'filter 200ms ease' }}
+                onHoverStart={() => setHoveredPanel('left')}
+                onHoverEnd={() => setHoveredPanel(null)}
+                animate={{ flexBasis: hoveredPanel === 'left' ? '80%' : hoveredPanel === 'right' ? '20%' : '50%' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              >
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                  style={{ backgroundImage: "url('/jacob_fondo.png')" }}
+                />
+                <div className="relative w-full h-full flex items-center z-10">
+                  <motion.div className="flex-1 pl-6" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                    <div className="text-white">
+                      <div className="text-2xl md:text-3xl font-bold leading-tight">Jacob</div>
+                      <div className="text-lg md:text-xl font-semibold -mt-1">Montero</div>
+                    </div>
+                  </motion.div>
+                  <div className="flex-none flex items-center justify-center h-full">
+                    <motion.div
+                      className="relative h-full flex items-center justify-center overflow-hidden"
+                      role="img"
+                      aria-label="Avatar Jacob"
+                      animate={{ x: hoveredPanel === 'left' ? -60 : -50 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                    >
+                      <img src="/jacob_ficha.png" alt="Jacob" className="h-full w-auto object-contain" />
+                    </motion.div>
+                  </div>
+                  <motion.div className="flex-1 pr-6" animate={{ opacity: hoveredPanel === 'left' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                    {hoveredPanel === 'left' && (
+                      <div className="max-w-xs bg-black/50 p-4 rounded-lg">
+                        <h3 className="text-xl font-semibold text-white">Jacob Montero</h3>
+                        <p className="text-sm text-white/90 mt-2">es un empresario tecnológico de 33 años cuya vida está marcada por un pasado de violencia y abuso infantil que forjó en él una personalidad protectora pero dominante, reservado e intensamente emocional. Divorciado tras una traición que consolidó su miedo a la vulnerabilidad, Jacob vive en constante lucha entre el control y el caos interno, entre proteger y obsesionarse, cargando con el terror de repetir los patrones de violencia que sufrió.</p>
+                      </div>
+                    )}
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Right panel (Personaje B) */}
+              <motion.div
+                className={`relative flex items-center ${hoveredPanel && hoveredPanel !== 'right' ? 'blur-sm' : ''}`}
+                style={{ transition: 'filter 200ms ease' }}
+                onHoverStart={() => setHoveredPanel('right')}
+                onHoverEnd={() => setHoveredPanel(null)}
+                animate={{ flexBasis: hoveredPanel === 'right' ? '80%' : hoveredPanel === 'left' ? '20%' : '50%' }}
+                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              >
+                <div
+                  aria-hidden
+                  className="absolute inset-0 bg-cover bg-center filter blur-sm scale-105"
+                  style={{ backgroundImage: "url('/helena_fondo.png')" }}
+                />
+                <div className="relative w-full h-full flex items-center z-10">
+                  <div className="w-full h-full flex items-center">
+                    <motion.div className="flex-1 pl-6 text-left" animate={{ opacity: hoveredPanel === 'right' ? 1 : 0 }} transition={{ duration: 0.18 }}>
+                      {hoveredPanel === 'right' && (
+                        <div className="max-w-xs bg-black/50 p-4 rounded-lg">
+                          <h3 className="text-xl font-semibold text-white">Helena Aspen</h3>
+                          <p className="text-sm text-white/90 mt-2">Helena Aspen es diseñadora de interiores cuya infancia quedó marcada por el abuso. Empática y profundamente sensible, trabaja por reconstruir su identidad tras relaciones que reproducían dinámicas de desvalorización; poco a poco aprende a establecer límites, a sanar sin fracturarse y a priorizarse a sí misma, aun cuando ese proceso le resulta doloroso.</p>
+                        </div>
+                      )}
+                    </motion.div>
+                    <div className="flex-none flex items-center justify-center h-full">
+                      <motion.div
+                        className="relative h-full flex items-center justify-center overflow-hidden"
+                        role="img"
+                        aria-label="Avatar Helena"
+                        animate={{ x: hoveredPanel === 'right' ? 60 : 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+                      >
+                        <img src="/helena_ficha.png" alt="Helena" className="h-full w-auto object-contain" />
+                      </motion.div>
+                    </div>
+                    <motion.div className="flex-1 pr-6 text-right" animate={{ opacity: hoveredPanel ? 0 : 1 }} transition={{ duration: 0.18 }}>
+                      <div className="text-white">
+                        <div className="text-2xl md:text-3xl font-bold leading-tight">Helena</div>
+                        <div className="text-lg md:text-xl font-semibold -mt-1">Aspen</div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          )}
         </div>
       </section>
 
